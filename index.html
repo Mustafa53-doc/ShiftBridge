@@ -198,11 +198,15 @@ section.sect:last-of-type{padding-bottom:56px}
 .db{display:grid;grid-template-columns:158px 1fr 40px;gap:12px;align-items:center}
 @media(max-width:520px){.db{grid-template-columns:120px 1fr 34px}}
 .dbname{font-size:12.5px}
-.dbtrack{display:block;position:relative;height:10px;background:#DEE5EF;border-radius:5px;overflow:hidden}
+.dbtrack{display:block;position:relative;height:10px;background:#EAEFF6;border-radius:5px;overflow:hidden}
 .dbfill{display:block;height:100%;min-width:0;border-radius:5px;width:0;transition:width .75s cubic-bezier(.34,1.2,.4,1)}
 .dbfill.zero{background:transparent!important}
 .dbtrack::after{content:'';position:absolute;inset:0;border-radius:5px;box-shadow:inset 0 1px 2px rgba(14,26,31,.09);pointer-events:none}
-.dbfill.a{background:var(--ok)}.dbfill.b{background:var(--brand)}.dbfill.c{background:var(--amber)}.dbfill.d{background:var(--slate)}.dbfill.e{background:#C3CDDB}
+.dbfill.a{background:var(--ok)}.dbfill.b{background:var(--brand)}.dbfill.c{background:var(--amber)}.dbfill.d{background:var(--slate)}
+/* unresolved risk — must read as the loudest bar, never blend into the track */
+.dbfill.e{background:var(--red);background-image:repeating-linear-gradient(115deg,rgba(255,255,255,.22) 0 6px,transparent 6px 13px)}
+.db.pending .dbname{color:var(--red);font-weight:600}
+.db.pending .dbn{color:var(--red)}
 .dbn{font-family:'IBM Plex Mono',monospace;font-size:12px;font-weight:600;text-align:right}
 .escrow{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-top:16px;padding-top:14px;border-top:1px dashed var(--line)}
 .escpill{font-family:'IBM Plex Mono',monospace;font-size:10.5px;padding:5px 10px;border-radius:12px;background:var(--card);border:1px solid var(--line);color:var(--slate)}
@@ -965,11 +969,13 @@ function renderWard(){
       fill.classList.toggle('zero',!n);
       fill.style.width=(n?Math.max(6,n/max*100):0)+'%';
       existing[i].querySelector('.dbn').textContent=n;
+      existing[i].classList.toggle('pending', d.name==='Awaiting a decision' && n>0);
     });
   } else {
     elBar.innerHTML=DISPO_META.map(d=>{
       const n=w.byDispo[d.name]||0;
-      return `<div class="db" data-tip="${d.name}"><span class="dbname">${d.name}</span><span class="dbtrack"><span class="dbfill ${d.cls} ${n?'':'zero'}" style="width:${n?Math.max(6,n/max*100):0}%"></span></span><span class="dbn">${n}</span></div>`;
+      const pend = d.name==='Awaiting a decision' && n>0;
+      return `<div class="db ${pend?'pending':''}" data-tip="${d.name}"><span class="dbname">${d.name}</span><span class="dbtrack"><span class="dbfill ${d.cls} ${n?'':'zero'}" style="width:${n?Math.max(6,n/max*100):0}%"></span></span><span class="dbn">${n}</span></div>`;
     }).join('');
   }
 
